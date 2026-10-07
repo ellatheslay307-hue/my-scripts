@@ -1,25 +1,8 @@
 -- Modern Terminal / Console UI Template (ella@main)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
 
 local LocalPlayer = Players.LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
-
--- Settings & Config
-local fovRadius = 120
-local showFOV = false
-local fovColor = Color3.fromRGB(255, 105, 180) -- Pink default
-
-local speedBoost = 16
-local jumpBoost = 50
-local normalSpeed = 16
-local normalJump = 50
-
-local origFogEnd = Lighting.FogEnd
-local origFogStart = Lighting.FogStart
-local origFogColor = Lighting.FogColor
 
 -- ScreenGui Setup
 local ScreenGui = Instance.new("ScreenGui")
@@ -53,7 +36,7 @@ local TopBarCorner = Instance.new("UICorner")
 TopBarCorner.CornerRadius = UDim.new(0, 12)
 TopBarCorner.Parent = TopBar
 
--- Terminal Window Buttons (Red, Yellow, Green)
+-- Decorative Window Dots
 local function createDot(color, posX)
     local dot = Instance.new("Frame")
     dot.Size = UDim2.new(0, 10, 0, 10)
@@ -71,13 +54,13 @@ createDot(Color3.fromRGB(255, 95, 86), 15)  -- Red
 createDot(Color3.fromRGB(255, 189, 46), 32) -- Yellow
 createDot(Color3.fromRGB(39, 201, 63), 49)  -- Green
 
--- Header Title ($ ella@main)
+-- Header Title
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Size = UDim2.new(0, 300, 1, 0)
 TitleLabel.Position = UDim2.new(0, 70, 0, 0)
 TitleLabel.BackgroundTransparency = 1
 TitleLabel.Text = "ella@main: ~$ main console"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 182, 193) -- Soft Pink
+TitleLabel.TextColor3 = Color3.fromRGB(255, 182, 193)
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.Font = Enum.Font.Code
 TitleLabel.TextSize = 14
@@ -109,23 +92,8 @@ ContentArea.Position = UDim2.new(0, 165, 0, 40)
 ContentArea.BackgroundTransparency = 1
 ContentArea.Parent = MainFrame
 
--- Tab Frames Table
+-- Tab System
 local tabs = {}
+local activeTab = nil
 
 local function createTab(tabName)
-    local tabContainer = Instance.new("ScrollingFrame")
-    tabContainer.Size = UDim2.new(1, 0, 1, 0)
-    tabContainer.BackgroundTransparency = 1
-    tabContainer.ScrollBarThickness = 3
-    tabContainer.ScrollBarImageColor3 = Color3.fromRGB(255, 105, 180)
-    tabContainer.Visible = false
-    tabContainer.Parent = ContentArea
-
-    local listLayout = Instance.new("UIListLayout")
-    listLayout.Padding = UDim.new(0, 10)
-    listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    listLayout.Parent = tabContainer
-
-    -- Tab Title inside content area
-    local header = Instance.new("TextLabel")
-    header.Size = UDim2.new(1, 0
