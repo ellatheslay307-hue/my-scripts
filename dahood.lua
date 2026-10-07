@@ -1,99 +1,183 @@
--- Modern Terminal / Console UI Template (ella@main)
+-- LocalScript
+-- Put inside StarterPlayer > StarterPlayerScripts
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
-local LocalPlayer = Players.LocalPlayer
+local player = Players.LocalPlayer
 
--- ScreenGui Setup
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "EllaMainUI"
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+--// Settings
+local menuVisible = true
+local fovRadius = 150
+local fovColor = Color3.fromRGB(255, 70, 70)
+local silentAimEnabled = false -- UI setting only
 
--- Main Window Frame
-local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 700, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -350, 0.5, -250)
-MainFrame.BackgroundColor3 = Color3.fromRGB(25, 20, 25) -- Dark Pink Tint Background
-MainFrame.BorderSizePixel = 0
-MainFrame.Active = true
-MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
+--// GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "EllaMain"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
 
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent = MainFrame
+local main = Instance.new("Frame")
+main.Size = UDim2.fromOffset(390, 500)
+main.Position = UDim2.new(0.5, -195, 0.5, -250)
+main.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+main.BorderSizePixel = 0
+main.Parent = gui
 
--- Top Bar (Terminal Style)
-local TopBar = Instance.new("Frame")
-TopBar.Size = UDim2.new(1, 0, 0, 35)
-TopBar.BackgroundColor3 = Color3.fromRGB(35, 28, 35)
-TopBar.BorderSizePixel = 0
-TopBar.Parent = MainFrame
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 14)
+corner.Parent = main
 
-local TopBarCorner = Instance.new("UICorner")
-TopBarCorner.CornerRadius = UDim.new(0, 12)
-TopBarCorner.Parent = TopBar
+--// Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -30, 0, 50)
+title.Position = UDim2.fromOffset(15, 10)
+title.BackgroundTransparency = 1
+title.Text = "ella main"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 22
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = main
 
--- Decorative Window Dots
-local function createDot(color, posX)
-    local dot = Instance.new("Frame")
-    dot.Size = UDim2.new(0, 10, 0, 10)
-    dot.Position = UDim2.new(0, posX, 0.5, -5)
-    dot.BackgroundColor3 = color
-    dot.BorderSizePixel = 0
-    dot.Parent = TopBar
-    
-    local dotCorner = Instance.new("UICorner")
-    dotCorner.CornerRadius = UDim.new(1, 0)
-    dotCorner.Parent = dot
+--// Helper
+local function makeButton(text, y)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, -30, 0, 45)
+    button.Position = UDim2.fromOffset(15, y)
+    button.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.Text = text
+    button.TextSize = 15
+    button.Font = Enum.Font.Gotham
+    button.AutoButtonColor = true
+    button.Parent = main
+
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 9)
+    c.Parent = button
+
+    return button
 end
 
-createDot(Color3.fromRGB(255, 95, 86), 15)  -- Red
-createDot(Color3.fromRGB(255, 189, 46), 32) -- Yellow
-createDot(Color3.fromRGB(39, 201, 63), 49)  -- Green
+--// Silent Aim UI toggle
+local silentButton = makeButton("Silent Aim: OFF", 75)
 
--- Header Title
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(0, 300, 1, 0)
-TitleLabel.Position = UDim2.new(0, 70, 0, 0)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "ella@main: ~$ main console"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 182, 193)
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-TitleLabel.Font = Enum.Font.Code
-TitleLabel.TextSize = 14
-TitleLabel.Parent = TopBar
+silentButton.MouseButton1Click:Connect(function()
+    silentAimEnabled = not silentAimEnabled
 
--- Left Sidebar Navigation
-local Sidebar = Instance.new("Frame")
-Sidebar.Size = UDim2.new(0, 160, 1, -35)
-Sidebar.Position = UDim2.new(0, 0, 0, 35)
-Sidebar.BackgroundColor3 = Color3.fromRGB(20, 16, 20)
-Sidebar.BorderSizePixel = 0
-Sidebar.Parent = MainFrame
+    if silentAimEnabled then
+        silentButton.Text = "Silent Aim: ON"
+        silentButton.BackgroundColor3 = Color3.fromRGB(45, 120, 70)
+    else
+        silentButton.Text = "Silent Aim: OFF"
+        silentButton.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    end
+end)
 
-local SidebarLayout = Instance.new("UIListLayout")
-SidebarLayout.Padding = UDim.new(0, 4)
-SidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
-SidebarLayout.Parent = Sidebar
+--// FOV slider
+local fovLabel = Instance.new("TextLabel")
+fovLabel.Size = UDim2.new(1, -30, 0, 30)
+fovLabel.Position = UDim2.fromOffset(15, 135)
+fovLabel.BackgroundTransparency = 1
+fovLabel.Text = "FOV Radius: 150"
+fovLabel.TextColor3 = Color3.new(1, 1, 1)
+fovLabel.TextSize = 15
+fovLabel.Font = Enum.Font.Gotham
+fovLabel.TextXAlignment = Enum.TextXAlignment.Left
+fovLabel.Parent = main
 
-local SidebarPadding = Instance.new("UIPadding")
-SidebarPadding.PaddingTop = UDim.new(0, 15)
-SidebarPadding.PaddingLeft = UDim.new(0, 10)
-SidebarPadding.PaddingRight = UDim.new(0, 10)
-SidebarPadding.Parent = Sidebar
+local slider = Instance.new("TextButton")
+slider.Size = UDim2.new(1, -30, 0, 8)
+slider.Position = UDim2.fromOffset(15, 170)
+slider.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+slider.Text = ""
+slider.Parent = main
 
--- Content Display Area
-local ContentArea = Instance.new("Frame")
-ContentArea.Size = UDim2.new(1, -170, 1, -45)
-ContentArea.Position = UDim2.new(0, 165, 0, 40)
-ContentArea.BackgroundTransparency = 1
-ContentArea.Parent = MainFrame
+local sliderCorner = Instance.new("UICorner")
+sliderCorner.CornerRadius = UDim.new(1, 0)
+sliderCorner.Parent = slider
 
--- Tab System
-local tabs = {}
-local activeTab = nil
+slider.MouseButton1Click:Connect(function()
+    local mouse = player:GetMouse()
+    local relative = math.clamp(
+        (mouse.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X,
+        0,
+        1
+    )
 
-local function createTab(tabName)
+    fovRadius = math.floor(25 + relative * 275)
+    fovLabel.Text = "FOV Radius: " .. fovRadius
+end)
+
+--// FOV circle
+local fovCircle = Instance.new("Frame")
+fovCircle.AnchorPoint = Vector2.new(0.5, 0.5)
+fovCircle.Position = UDim2.fromScale(0.5, 0.5)
+fovCircle.Size = UDim2.fromOffset(fovRadius * 2, fovRadius * 2)
+fovCircle.BackgroundTransparency = 1
+fovCircle.BorderSizePixel = 0
+fovCircle.Parent = gui
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = fovColor
+stroke.Thickness = 2
+stroke.Transparency = 0.15
+stroke.Parent = fovCircle
+
+local circleCorner = Instance.new("UICorner")
+circleCorner.CornerRadius = UDim.new(1, 0)
+circleCorner.Parent = fovCircle
+
+RunService.RenderStepped:Connect(function()
+    fovCircle.Size = UDim2.fromOffset(
+        fovRadius * 2,
+        fovRadius * 2
+    )
+
+    fovCircle.Position = UDim2.fromScale(0.5, 0.5)
+end)
+
+--// FOV color buttons
+local colors = {
+    Color3.fromRGB(255, 60, 60),
+    Color3.fromRGB(255, 150, 30),
+    Color3.fromRGB(255, 230, 50),
+    Color3.fromRGB(50, 220, 100),
+    Color3.fromRGB(50, 150, 255),
+    Color3.fromRGB(150, 70, 255),
+    Color3.fromRGB(255, 70, 180),
+    Color3.fromRGB(255, 255, 255)
+}
+
+for i, color in ipairs(colors) do
+    local colorButton = Instance.new("TextButton")
+    colorButton.Size = UDim2.fromOffset(28, 28)
+    colorButton.Position = UDim2.fromOffset(15 + ((i - 1) * 35), 220)
+    colorButton.BackgroundColor3 = color
+    colorButton.Text = ""
+    colorButton.Parent = main
+
+    local c = Instance.new("UICorner")
+    c.CornerRadius = UDim.new(0, 6)
+    c.Parent = colorButton
+
+    colorButton.MouseButton1Click:Connect(function()
+        fovColor = color
+        stroke.Color = color
+    end)
+end
+
+--// Right Ctrl = hide/show UI
+UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then
+        return
+    end
+
+    if input.KeyCode == Enum.KeyCode.RightControl then
+        menuVisible = not menuVisible
+        main.Visible = menuVisible
+    end
+end)
