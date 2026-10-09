@@ -1,29 +1,6 @@
 local UIS = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
-local GuiService = game:GetService("GuiService")
-local Lighting = game:GetService("Lighting")
-local lp = Players.LocalPlayer
-local cam = workspace.CurrentCamera
-local mouse = lp:GetMouse()
-
--- Capture EXACT original lighting properties before any script modifications
-local defaultLighting = {
-    FogColor = Lighting.FogColor,
-    FogStart = Lighting.FogStart,
-    FogEnd = Lighting.FogEnd,
-    OutdoorAmbient = Lighting.OutdoorAmbient,
-    Ambient = Lighting.Ambient,
-    Brightness = Lighting.Brightness,
-    ColorShift_Bottom = Lighting.ColorShift_Bottom,
-    ColorShift_Top = Lighting.ColorShift_Top
-}
-
--- Capture original Atmosphere densities
-local originalAtmospheres = {}
-for _, child in ipairs(Lighting:GetChildren()) do
-    if child:IsA("Atmosphere") then
+local RunService 
         originalAtmospheres[child] = {
             Density = child.Density,
             Haze = child.Haze,
