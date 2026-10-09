@@ -1,26 +1,4 @@
--- Silent
-ENABLE_SILENT = true,  -- Remove Recoil/Spread
 
--- Movement
-WALK_SPEED = 16,       -- Base WalkSpeed
-JUMP_POWER = 50,       -- Base JumpHeight
-SPEED_BOOST = 1.0,     -- Multiplier (1.0 = normal, 2.0 = double)
-JUMP_BOOST = 1.0,      -- Multiplier
-SPRINT_MULT = 1.5      -- Sprint multiplier when holding Shift}
-
--- State local isSprinting = false local currentTarget = nil
-
--- UI Creation local function createCuteUI() local gui = Instance.new("ScreenGui") gui.Name = "EllarougDaHoodUI" gui.ResetOnSpawn = false gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling gui.Parent = player:WaitForChild("PlayerGui")
-
--- Main Frame (Cute Pink Theme)
-local frame = Instance.new("Frame")
-frame.Name = "MainFrame"
-frame.Size = UDim2.new(0, 250, 0, 320)
-frame.Position = UDim2.new(0.5, -125, 0.5, -160)
-frame.BackgroundColor3 = Color3.fromRGB(255, 200, 230) -- Light Pink
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Draggable = true
 frame.Parent = gui
 
 -- Corner Roundness
