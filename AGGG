@@ -1,26 +1,4 @@
-local UIS = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
-local Lighting = game:GetService("Lighting")
 
-local lp = Players.LocalPlayer
-while not lp do
-    task.wait()
-    lp = Players.LocalPlayer
-end
-
-local cam = workspace.CurrentCamera
-local mouse = lp:GetMouse()
-
--- Capture original lighting properties
-local defaultLighting = {
-    FogColor = Lighting.FogColor,
-    FogStart = Lighting.FogStart,
-    FogEnd = Lighting.FogEnd,
-    OutdoorAmbient = Lighting.OutdoorAmbient,
-    Ambient = Lighting.Ambient,
-    Brightness = Lighting.Brightness,
     ColorShift_Bottom = Lighting.ColorShift_Bottom,
     ColorShift_Top = Lighting.ColorShift_Top
 }
